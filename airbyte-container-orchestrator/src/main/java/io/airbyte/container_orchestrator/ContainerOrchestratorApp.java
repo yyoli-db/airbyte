@@ -21,6 +21,7 @@ import io.airbyte.commons.temporal.TemporalUtils;
 import io.airbyte.commons.temporal.sync.OrchestratorConstants;
 import io.airbyte.config.Configs;
 import io.airbyte.config.EnvConfigs;
+import io.airbyte.config.StandardSyncInput;
 import io.airbyte.config.helpers.LogClientSingleton;
 import io.airbyte.persistence.job.models.JobRunConfig;
 import io.airbyte.workers.WorkerConfigs;
@@ -269,11 +270,15 @@ public class ContainerOrchestratorApp {
 
   // Create AirbyteMessageVersionedMigratorFactory
   // This should be replaced by a simple injection once we migrated the orchestrator to the micronaut
-  private static AirbyteMessageVersionedMigratorFactory getAirbyteMessageVersionedMigratorFactory() {
+  private static AirbyteMessageVersionedMigratorFactory getAirbyteMessageVersionedMigratorFactory() throws IOException {
+    // TODO do this better
+    StandardSyncInput syncInput = JobOrchestrator.readAndDeserializeFile(
+        Path.of(KubePodProcess.CONFIG_DIR, OrchestratorConstants.INIT_FILE_INPUT),
+        StandardSyncInput.class);
     final AirbyteMessageMigrator messageMigrator = new AirbyteMessageMigrator(
         List.of(
             new AirbyteMessageMigrationV0(),
-            new AirbyteMessageMigrationV1()));
+            new AirbyteMessageMigrationV1(syncInput.getCatalog())));
     messageMigrator.initialize();
     return new AirbyteMessageVersionedMigratorFactory(messageMigrator);
   }
