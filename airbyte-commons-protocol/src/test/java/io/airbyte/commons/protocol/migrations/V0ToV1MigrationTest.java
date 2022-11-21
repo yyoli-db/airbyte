@@ -641,7 +641,7 @@ public class V0ToV1MigrationTest {
       // but this test case is mostly about preserving the message structure, so it's not super relevant
       JsonNode newSchema = Jsons.deserialize("""
                                              {
-                                               "type": "string"
+                                               "$ref": "WellKnownTypes.json#/definitions/String"
                                              }
                                              """);
 
@@ -654,7 +654,7 @@ public class V0ToV1MigrationTest {
                                                              "streams": [
                                                                {
                                                                  "json_schema": {
-                                                                   "$ref": "WellKnownTypes.json#/definitions/String"
+                                                                   "type": "string"
                                                                  }
                                                                }
                                                              ]
