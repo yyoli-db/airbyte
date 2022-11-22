@@ -727,7 +727,8 @@ public class V0ToV1MigrationTest {
                                                       },
                                                       "example_timestamp_without_tz": {
                                                         "type": "string",
-                                                        "airbyte_type": "timestamp_without_timezone"
+                                                        "airbyte_type": "timestamp_without_timezone",
+                                                        "format": "date-time"
                                                       },
                                                       "example_timez": {
                                                         "type": "string",
@@ -736,7 +737,8 @@ public class V0ToV1MigrationTest {
                                                       },
                                                       "example_time_without_tz": {
                                                         "type": "string",
-                                                        "airbyte_type": "time_without_timezone"
+                                                        "airbyte_type": "time_without_timezone",
+                                                        "format": "time"
                                                       },
                                                       "example_date": {
                                                         "type": "string",
