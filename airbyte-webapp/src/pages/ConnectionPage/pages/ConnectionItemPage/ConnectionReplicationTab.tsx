@@ -10,7 +10,6 @@ import { Action, Namespace } from "core/analytics";
 import { getFrequencyFromScheduleData } from "core/analytics/utils";
 import { toWebBackendConnectionUpdate } from "core/domain/connection";
 import { useConfirmCatalogDiff } from "hooks/connection/useConfirmCatalogDiff";
-import { useIsAutoDetectSchemaChangesEnabled } from "hooks/connection/useIsAutoDetectSchemaChangesEnabled";
 import { useSchemaChanges } from "hooks/connection/useSchemaChanges";
 import { PageTrackingCodes, useAnalyticsService, useTrackPage } from "hooks/services/Analytics";
 import { useConnectionEditService } from "hooks/services/ConnectionEdit/ConnectionEditService";
@@ -35,7 +34,7 @@ import styles from "./ConnectionReplicationTab.module.scss";
 import { ResetWarningModal } from "./ResetWarningModal";
 
 export const ConnectionReplicationTab: React.FC = () => {
-  const isAutoDetectSchemaChangesEnabled = useIsAutoDetectSchemaChangesEnabled();
+  const allowAutoDetectSchemaChanges = useFeature(FeatureItem.AllowAutoDetectSchemaChanges);
   const analyticsService = useAnalyticsService();
   const connectionService = useConnectionService();
   const workspaceId = useCurrentWorkspaceId();
@@ -90,7 +89,7 @@ export const ConnectionReplicationTab: React.FC = () => {
         workspaceId,
         mode,
         allowSubOneHourCronExpressions,
-        isAutoDetectSchemaChangesEnabled,
+        allowAutoDetectSchemaChanges,
         connection.operations
       );
 
@@ -149,7 +148,7 @@ export const ConnectionReplicationTab: React.FC = () => {
       workspaceId,
       mode,
       allowSubOneHourCronExpressions,
-      isAutoDetectSchemaChangesEnabled,
+      allowAutoDetectSchemaChanges,
       connection.operations,
       connection.catalogDiff?.transforms,
       connection.syncCatalog.streams,
@@ -179,7 +178,7 @@ export const ConnectionReplicationTab: React.FC = () => {
           validationSchema={createConnectionValidationSchema({
             mode,
             allowSubOneHourCronExpressions,
-            isAutoDetectSchemaChangesEnabled,
+            allowAutoDetectSchemaChanges,
           })}
           onSubmit={onFormSubmit}
           enableReinitialize
