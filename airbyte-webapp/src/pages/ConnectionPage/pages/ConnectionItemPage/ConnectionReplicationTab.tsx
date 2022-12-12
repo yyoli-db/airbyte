@@ -1,5 +1,5 @@
-import { Form, Formik, FormikHelpers } from "formik";
-import React, { useCallback, useState } from "react";
+import { Form, Formik, FormikHelpers, useFormikContext } from "formik";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useUnmount } from "react-use";
 
@@ -32,6 +32,19 @@ import {
 
 import styles from "./ConnectionReplicationTab.module.scss";
 import { ResetWarningModal } from "./ResetWarningModal";
+
+const ValidateFormOnSchemaRefresh: React.FC = () => {
+  const { schemaHasBeenRefreshed } = useConnectionEditService();
+  const { setTouched } = useFormikContext();
+
+  useEffect(() => {
+    if (schemaHasBeenRefreshed) {
+      setTouched({ syncCatalog: true }, true);
+    }
+  }, [setTouched, schemaHasBeenRefreshed]);
+
+  return null;
+};
 
 export const ConnectionReplicationTab: React.FC = () => {
   const allowAutoDetectSchemaChanges = useFeature(FeatureItem.AllowAutoDetectSchemaChanges);
@@ -189,6 +202,7 @@ export const ConnectionReplicationTab: React.FC = () => {
               schemaHasBeenRefreshed={schemaHasBeenRefreshed}
             >
               <Form>
+                <ValidateFormOnSchemaRefresh />
                 <ConnectionFormFields
                   values={values}
                   isSubmitting={isSubmitting}
