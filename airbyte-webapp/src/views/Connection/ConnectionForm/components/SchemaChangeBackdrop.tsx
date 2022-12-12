@@ -2,7 +2,7 @@ import { FormattedMessage } from "react-intl";
 
 import { Text } from "components/ui/Text";
 
-import { useIsAutoDetectSchemaChangesEnabled } from "hooks/connection/useIsAutoDetectSchemaChangesEnabled";
+import { FeatureItem, useFeature } from "hooks/services/Feature";
 
 import { OctaviaRedFlagImage } from "./OctaviaRedFlagImage";
 import styles from "./SchemaChangeBackdrop.module.scss";
@@ -16,9 +16,9 @@ export const SchemaChangeBackdrop: React.FC<React.PropsWithChildren<SchemaChange
   schemaHasBeenRefreshed,
   children,
 }) => {
-  const isAutoDetectSchemaChangesEnabled = useIsAutoDetectSchemaChangesEnabled();
+  const allowAutoDetectSchemaChanges = useFeature(FeatureItem.AllowAutoDetectSchemaChanges);
 
-  if (schemaHasBeenRefreshed || !hasBreakingSchemaChange || !isAutoDetectSchemaChangesEnabled) {
+  if (schemaHasBeenRefreshed || !hasBreakingSchemaChange || !allowAutoDetectSchemaChanges) {
     return <>{children}</>;
   }
   const schemaChangeImage = <OctaviaRedFlagImage />;
