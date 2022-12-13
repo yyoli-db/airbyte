@@ -13,8 +13,6 @@ import io.airbyte.config.persistence.SecretsRepositoryReader;
 import io.airbyte.config.persistence.SecretsRepositoryWriter;
 import io.airbyte.db.Database;
 import io.airbyte.persistence.job.JobPersistence;
-import io.airbyte.server.apis.LogsApiController;
-import io.airbyte.server.apis.NotificationsApiController;
 import io.airbyte.server.apis.WebBackendApiController;
 import io.airbyte.server.apis.binders.WebBackendApiBinder;
 import io.airbyte.server.apis.factories.WebBackendApiFactory;
