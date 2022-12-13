@@ -35,6 +35,7 @@ Rate Limiting is based on the API Key tier subscription, get more info [here](ht
 
 ## Changelog
 
-| Version | Date       | Pull Request                                             | Subject                                         |
-|:--------|:-----------|:---------------------------------------------------------|:------------------------------------------------|
-| 0.1.0   | 2022-11-01 | [18808](https://github.com/airbytehq/airbyte/pull/18808) | 🎉 New Source: GNews                            |
+| Version | Date       | Pull Request                                             | Subject                                          |
+|:--------|:-----------|:---------------------------------------------------------|:-------------------------------------------------|
+| 0.1.1   | 2022-12-13 | [20405](https://github.com/airbytehq/airbyte/pull/20405) | Update the manifest to use inline stream schemas |
+| 0.1.0   | 2022-11-01 | [18808](https://github.com/airbytehq/airbyte/pull/18808) | 🎉 New Source: GNews                             |
