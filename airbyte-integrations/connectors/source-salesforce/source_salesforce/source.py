@@ -66,10 +66,12 @@ class SourceSalesforce(AbstractSource):
         # For such cases connector tries to use BULK API because it uses POST request and passes properties in the request body.
         bulk_required = properties_length + 2000 > Salesforce.REQUEST_SIZE_LIMITS
 
-        if rest_required and not bulk_required:
-            return "rest"
+        # Use bulk API by default.
+        # if rest_required and not bulk_required:
+        #     return "rest"
         if not rest_required:
             return "bulk"
+        return "rest"
 
     @classmethod
     def generate_streams(
@@ -77,6 +79,7 @@ class SourceSalesforce(AbstractSource):
         config: Mapping[str, Any],
         stream_objects: Mapping[str, Any],
         sf_object: Salesforce,
+        catalog: ConfiguredAirbyteCatalog = None,
     ) -> List[Stream]:
         """ "Generates a list of stream by their names. It can be used for different tests too"""
         authenticator = TokenAuthenticator(sf_object.access_token)
@@ -84,7 +87,18 @@ class SourceSalesforce(AbstractSource):
         streams = []
         for stream_name, sobject_options in stream_objects.items():
             streams_kwargs = {"sobject_options": sobject_options}
-            selected_properties = stream_properties.get(stream_name, {}).get("properties", {})
+
+            json_schema = stream_properties.get(stream_name, {})
+            # overwrite json_schema to ONLY include selected columns from configured catalog if it is not empty.
+            if catalog != None:
+                for configured_stream in catalog.streams:
+                    if configured_stream.stream.name == stream_name:
+                        properties = configured_stream.stream.json_schema.get("properties", {})
+                        if properties != None and len(properties) > 0:
+                            json_schema = configured_stream.stream.json_schema
+                            break
+
+            selected_properties = json_schema.get("properties", {})
 
             api_type = cls._get_api_type(stream_name, selected_properties)
             if api_type == "rest":
@@ -94,7 +108,6 @@ class SourceSalesforce(AbstractSource):
             else:
                 raise Exception(f"Stream {stream_name} cannot be processed by REST or BULK API.")
 
-            json_schema = stream_properties.get(stream_name, {})
             pk, replication_key = sf_object.get_pk_and_replication_key(json_schema)
             streams_kwargs.update(dict(sf_api=sf_object, pk=pk, stream_name=stream_name, schema=json_schema, authenticator=authenticator))
             if replication_key and stream_name not in UNSUPPORTED_FILTERING_STREAMS:
@@ -107,7 +120,7 @@ class SourceSalesforce(AbstractSource):
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         sf = self._get_sf_object(config)
         stream_objects = sf.get_validated_streams(config=config, catalog=self.catalog)
-        streams = self.generate_streams(config, stream_objects, sf)
+        streams = self.generate_streams(config, stream_objects, sf, self.catalog)
         streams.append(Describe(sf_api=sf, catalog=self.catalog))
         return streams
 

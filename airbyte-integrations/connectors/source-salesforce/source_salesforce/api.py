@@ -77,6 +77,12 @@ QUERY_RESTRICTED_SALESFORCE_OBJECTS = [
 
 # The following objects are not supported by the query method being used.
 QUERY_INCOMPATIBLE_SALESFORCE_OBJECTS = [
+    # TODO: debug
+    # "Account",
+    # "Contact",
+    # "Lead",
+    # "Opportunity", 
+
     "AIPredictionEvent",
     "ActivityHistory",
     "AggregateResult",
